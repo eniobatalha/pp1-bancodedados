@@ -1,0 +1,116 @@
+
+Table "cliente" {
+  "id" SERIAL [pk]
+  "nome" VARCHAR(100) [not null]
+  "cpf" VARCHAR(14) [unique, not null]
+  "telefone" VARCHAR(20) [not null]
+  "email" VARCHAR(50) [not null]
+  "senha" VARCHAR(64) [not null]
+}
+
+Table "endereco_cliente" {
+  "id" SERIAL [pk]
+  "cliente_id" INTEGER [ref: > cliente.id]
+  "cep" VARCHAR(10) [not null]
+  "logradouro" VARCHAR(100) [not null]
+  "complemento" VARCHAR(50) [not null]
+  "numero" VARCHAR(10) [not null]
+  "bairro" VARCHAR(50) [not null]
+  "ponto_de_referencia" VARCHAR(100) [not null]
+  "cidade" VARCHAR(40) [not null]
+  "estado" VARCHAR(2) [not null]
+}
+
+Table "estabelecimento" {
+  "id" SERIAL [pk]
+  "nome" VARCHAR(100) [not null]
+  "cnpj" VARCHAR(18) [unique, not null]
+  "categoria" VARCHAR(50) [not null]
+  "cupons" INTEGER [not null, default: 0]
+  "email" VARCHAR(50) [not null]
+  "senha" VARCHAR(64) [not null]
+}
+
+Table "endereco_estabelecimento" {
+  "id" SERIAL [pk]
+  "estabelecimento_id" INTEGER [ref: > estabelecimento.id]
+  "cep" VARCHAR(10) [not null]
+  "logradouro" VARCHAR(100) [not null]
+  "complemento" VARCHAR(50) [not null]
+  "numero" VARCHAR(10) [not null]
+  "bairro" VARCHAR(50) [not null]
+  "ponto_de_referencia" VARCHAR(100) [not null]
+  "cidade" VARCHAR(40) [not null]
+  "estado" VARCHAR(2) [not null]
+}
+
+Table "categoria" {
+  "id" SERIAL [pk]
+  "descricao" VARCHAR(100) [not null]
+}
+
+Table "produto" {
+  "id" SERIAL [pk]
+  "id_estabelecimento" INTEGER [not null, ref: > estabelecimento.id]
+  "id_categoria" INTEGER [not null, ref: > categoria.id]
+  "nome" VARCHAR(100) [not null]
+  "descricao" TEXT
+  "preco" NUMERIC(10, 2) [not null]
+}
+
+Table "imagens_produto" {
+  "id" SERIAL [pk]
+  "id_produto" INTEGER [not null, ref: > produto.id]
+  "url_imagem" VARCHAR(255) [not null]
+}
+
+Table "status_pedido" {
+  "id" SERIAL [pk]
+  "descricao" VARCHAR(100) [not null]
+  "tempo_de_espera" INTEGER [not null]
+}
+
+Table "pedido" {
+  "id" SERIAL [pk]
+  "id_status" INTEGER [not null, ref: > status_pedido.id]
+  "id_cliente" INTEGER [not null, ref: > cliente.id]
+  "id_restaurante" INTEGER [not null, ref: > estabelecimento.id]
+  "data_e_hora" TIMESTAMP [not null]
+  "valor_pedido" NUMERIC(10, 2) [not null]
+}
+
+Table "endereco_pedido" {
+  "id" SERIAL [pk]
+  "pedido_id" INTEGER [not null, ref: > pedido.id]
+  "cep" VARCHAR(10) [not null]
+  "logradouro" VARCHAR(100) [not null]
+  "complemento" VARCHAR(50) [not null]
+  "numero" VARCHAR(10) [not null]
+  "bairro" VARCHAR(50) [not null]
+  "ponto_de_referencia" VARCHAR(100) [not null]
+  "cidade" VARCHAR(40) [not null]
+  "estado" VARCHAR(2) [not null]
+}
+
+Table "itens_do_pedido" {
+  "id" SERIAL [pk]
+  "id_produto" INTEGER [not null, ref: > produto.id]
+  "id_pedido" INTEGER [not null, ref: > pedido.id]
+  "quantidade" INTEGER [not null]
+  "valor" NUMERIC(10, 2) [not null]
+}
+
+Table "forma_de_pagamento" {
+  "id" SERIAL [pk]
+  "cliente_id" INTEGER [not null, ref: > cliente.id]
+  "tipo" VARCHAR(50) [not null]
+  "numero_cartao" VARCHAR(16) [not null]
+  "data_validade" VARCHAR(7) [not null]
+  "nome_titular" VARCHAR(100) [not null]
+  "cvv" VARCHAR(3) [not null]
+  "endereco_cobranca" VARCHAR(100) [not null]
+  "cidade_cobranca" VARCHAR(40) [not null]
+  "estado_cobranca" VARCHAR(2) [not null]
+  "cep_cobranca" VARCHAR(10) [not null]
+}
+

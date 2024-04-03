@@ -1,0 +1,114 @@
+CREATE TABLE `cliente` (
+  `id` SERIAL PRIMARY KEY,
+  `nome` VARCHAR(100) NOT NULL,
+  `cpf` VARCHAR(14) UNIQUE NOT NULL,
+  `telefone` VARCHAR(20) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `senha` VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE `endereco_cliente` (
+  `id` SERIAL PRIMARY KEY,
+  `cliente_id` INTEGER REFERENCES `cliente` (`id`),
+  `cep` VARCHAR(10) NOT NULL,
+  `logradouro` VARCHAR(100) NOT NULL,
+  `complemento` VARCHAR(50) NOT NULL,
+  `numero` VARCHAR(10) NOT NULL,
+  `bairro` VARCHAR(50) NOT NULL,
+  `ponto_de_referencia` VARCHAR(100) NOT NULL,
+  `cidade` VARCHAR(40) NOT NULL,
+  `estado` VARCHAR(2) NOT NULL
+);
+
+CREATE TABLE `estabelecimento` (
+  `id` SERIAL PRIMARY KEY,
+  `nome` VARCHAR(100) NOT NULL,
+  `cnpj` VARCHAR(18) UNIQUE NOT NULL,
+  `categoria` VARCHAR(50) NOT NULL,
+  `cupons` INTEGER NOT NULL DEFAULT 0,
+  `email` VARCHAR(50) NOT NULL,
+  `senha` VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE `endereco_estabelecimento` (
+  `id` SERIAL PRIMARY KEY,
+  `estabelecimento_id` INTEGER REFERENCES `estabelecimento` (`id`),
+  `cep` VARCHAR(10) NOT NULL,
+  `logradouro` VARCHAR(100) NOT NULL,
+  `complemento` VARCHAR(50) NOT NULL,
+  `numero` VARCHAR(10) NOT NULL,
+  `bairro` VARCHAR(50) NOT NULL,
+  `ponto_de_referencia` VARCHAR(100) NOT NULL,
+  `cidade` VARCHAR(40) NOT NULL,
+  `estado` VARCHAR(2) NOT NULL
+);
+
+CREATE TABLE `categoria` (
+  `id` SERIAL PRIMARY KEY,
+  `descricao` VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE `produto` (
+  `id` SERIAL PRIMARY KEY,
+  `id_estabelecimento` INTEGER REFERENCES `estabelecimento` (`id`),
+  `id_categoria` INTEGER REFERENCES `categoria` (`id`),
+  `nome` VARCHAR(100) NOT NULL,
+  `descricao` TEXT,
+  `preco` NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE `imagens_produto` (
+  `id` SERIAL PRIMARY KEY,
+  `id_produto` INTEGER REFERENCES `produto` (`id`),
+  `url_imagem` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `status_pedido` (
+  `id` SERIAL PRIMARY KEY,
+  `descricao` VARCHAR(100) NOT NULL,
+  `tempo_de_espera` INTEGER NOT NULL
+);
+
+CREATE TABLE `pedido` (
+  `id` SERIAL PRIMARY KEY,
+  `id_status` INTEGER REFERENCES `status_pedido` (`id`),
+  `id_cliente` INTEGER REFERENCES `cliente` (`id`),
+  `id_restaurante` INTEGER REFERENCES `estabelecimento` (`id`),
+  `data_e_hora` TIMESTAMP NOT NULL,
+  `valor_pedido` NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE `endereco_pedido` (
+  `id` SERIAL PRIMARY KEY,
+  `pedido_id` INTEGER REFERENCES `pedido` (`id`),
+  `cep` VARCHAR(10) NOT NULL,
+  `logradouro` VARCHAR(100) NOT NULL,
+  `complemento` VARCHAR(50) NOT NULL,
+  `numero` VARCHAR(10) NOT NULL,
+  `bairro` VARCHAR(50) NOT NULL,
+  `ponto_de_referencia` VARCHAR(100) NOT NULL,
+  `cidade` VARCHAR(40) NOT NULL,
+  `estado` VARCHAR(2) NOT NULL
+);
+
+CREATE TABLE `itens_do_pedido` (
+  `id` SERIAL PRIMARY KEY,
+  `id_produto` INTEGER REFERENCES `produto` (`id`),
+  `id_pedido` INTEGER REFERENCES `pedido` (`id`),
+  `quantidade` INTEGER NOT NULL,
+  `valor` NUMERIC(10,2) NOT NULL
+);
+
+CREATE TABLE `forma_de_pagamento` (
+  `id` SERIAL PRIMARY KEY,
+  `cliente_id` INTEGER REFERENCES `cliente` (`id`),
+  `tipo` VARCHAR(50) NOT NULL,
+  `numero_cartao` VARCHAR(16) NOT NULL,
+  `data_validade` VARCHAR(7) NOT NULL,
+  `nome_titular` VARCHAR(100) NOT NULL,
+  `cvv` VARCHAR(3) NOT NULL,
+  `endereco_cobranca` VARCHAR(100) NOT NULL,
+  `cidade_cobranca` VARCHAR(40) NOT NULL,
+  `estado_cobranca` VARCHAR(2) NOT NULL,
+  `cep_cobranca` VARCHAR(10) NOT NULL
+);
